@@ -1,0 +1,30 @@
+{
+  "name": "justdoit",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "postinstall": "npm run build -w @justdoit/shared",
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down",
+    "infra:reset": "docker compose down -v",
+    "infra:logs": "docker compose logs -f mongodb",
+    "dev:web": "npm run build -w @justdoit/shared && npm run dev -w @justdoit/web",
+    "dev:api": "npm run start:dev -w @justdoit/api",
+    "dev": "npm run build -w @justdoit/shared && concurrently -k -n api,web -c green,blue \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:local": "npm run infra:up && npm run dev",
+    "start:web": "npm run start -w @justdoit/web",
+    "start:api": "npm run start -w @justdoit/api",
+    "start": "concurrently -k -n api,web -c green,blue \"npm run start:api\" \"npm run start:web\"",
+    "start:local": "npm run infra:up && npm run build && npm run start",
+    "build": "npm run build -w @justdoit/shared && npm run build -w @justdoit/api && npm run build -w @justdoit/web",
+    "lint": "npm run lint -w @justdoit/web && npm run lint -w @justdoit/api",
+    "typecheck": "npm run typecheck -w @justdoit/shared && npm run typecheck -w @justdoit/api && npm run typecheck -w @justdoit/web"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
